@@ -652,6 +652,11 @@ sign_domain() {
   fi
   cat "${CERTDIR}/${domain}/chain-${timestamp}.pem" >> "${CERTDIR}/${domain}/fullchain-${timestamp}.pem"
 
+  # Create combined
+  echo "+ Creating combined.pem..."
+  cat "${privkey}" > "${CERTDIR}/${domain}/combined-${timestamp}.pem"
+  cat "cert-${timestamp}.pem" >> "${CERTDIR}/${domain}/combined-${timestamp}.pem"
+
   # Update symlinks
   [[ "${privkey}" = "privkey.pem" ]] || ln -sf "privkey-${timestamp}.pem" "${CERTDIR}/${domain}/privkey.pem"
 
@@ -659,6 +664,7 @@ sign_domain() {
   ln -sf "fullchain-${timestamp}.pem" "${CERTDIR}/${domain}/fullchain.pem"
   ln -sf "cert-${timestamp}.csr" "${CERTDIR}/${domain}/cert.csr"
   ln -sf "cert-${timestamp}.pem" "${CERTDIR}/${domain}/cert.pem"
+  ln -sf "combined-${timestamp}.pem" "${CERTDIR}/${domain}/combined.pem"
 
   # Wait for hook script to clean the challenge and to deploy cert if used
   export KEY_ALGO
